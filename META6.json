@@ -1,0 +1,21 @@
+{
+    "perl"      : "6.d",
+    "name"      : "Getopt::ArgParse",
+    "api"       : "1",
+    "version"   : "0.0.1",
+    "description" : "Getopt::ArgParse",
+    "authors    : [ "Thomas Drillich" ],
+    "license"   : "Artistic-2.0",
+    "provides"  : {
+        "Getopt::ArgParse":"lib/Getopt/ArgParse.rakumod"
+    },
+    "depends"   : [],
+    "test-depends": [
+        "Test::META"
+    ],
+    "build-depends": [],
+    "resources" : ["templates/default-template.mustache"],
+    "tags"      : [ "Getopt" ],
+    "source-url": "",
+}
+// AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib"
