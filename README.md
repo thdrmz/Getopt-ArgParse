@@ -71,7 +71,7 @@ optlong
 : A word starting with an <alpha> followed by <alphanum> and the charakters - and. This word will be used at options starting with double dash '--'.
 
 required
-: Boolean defauls to Bool::False, when true and option is not given aften argument parsing a X::GP::MissedOption Exception should be thrown.
+: Boolean defauls toFalse, when true and option is not given aften argument parsing a X::GP::MissedOption Exception should be thrown.
 
 help
 : A text describing the option.
@@ -88,7 +88,7 @@ value()
 
 set(Str <argument>)
 set()
-: Set the option value, return true when <argument> is used and false when not.
+: Set the option value, return true when <argument> is used and false when not. These method must be defined by the option object, if called in base an exception will be thrown.
 
 gengist()
 : Returns string of internals to use it in gist() method.
@@ -99,7 +99,15 @@ result()
 optstr()
 : Returns optchar and optlong as string, for the use in help messages.
 
+reset()
+: this function must be defined by the option object and shall reset the option value to its default.
+
+value()
+: this function must return the options argument and must be defined by option object.
+
 ### Getopt::ArgParse::Option::Boolean
+A boolean option does not need an argument, but here are the arguments yes, no, true, false allowed to set the boolean value.
+Without a argument, the current value will be toggled.
 
 #### Attributes
 
