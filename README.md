@@ -80,7 +80,7 @@ dest
 : The key name of the option the argumet parser should return, defaults to the long option name.
 
 meta
-: A word describing the value of an option, eg. <file>.
+: A word describing the argument of an option, eg. <file>.
 
 #### Methods
 value()
@@ -106,42 +106,109 @@ value()
 : this function must return the options argument and must be defined by option object.
 
 ### Getopt::ArgParse::Option::Boolean
-A boolean option does not need an argument, but here are the arguments yes, no, true, false allowed to set the boolean value.
+A boolean option does not need an argument, but here are the arguments yes, no, true, false allowed to set a boolean value.
 Without a argument, the current value will be toggled.
 
 #### Attributes
+default
+: set initial boolean value
 
 #### Methods
+set()
+set(Bool)
+set(Str [yes|no|true|false])
+: set or toggle value
 
 ### Getopt::ArgParse::Option::String
 
 #### Attributes
+verify
+: A regex to verify the option argument, if it is defined and verify does not match a exception X::GP::Value will be thrown.
 
 #### Methods
+set(Str)
+: set the value, returns True.
+
+value()
+: returns the option value.
+
+reset()
+: reset to default.
 
 ### Getopt::ArgParse::Option::Number
+Manage a option with an integer argument.
 
 #### Attributes
+default
+: the default value
+
+min
+: when defined, the minimal value of argument
+
+max
+: when defined, the maximal value of argument
 
 #### Methods
+et(Str)
+: set value, throws an exception if parameter isn't a number.
+
+set(Int)
+: set value, throws an exception if parameter isn't between defined min max.
 
 ### Getopt::ArgParse::Option::Float
+Manage a option with an floating point argument.
 
 #### Attributes
+default
+: the default value
+
+min
+: when defined, the minimal value of argument
+
+max
+: when defined, the maximal value of argument
 
 #### Methods
+set(Str)
+: set value, throws an exception if parameter isn't a number.
+
+set(Float)
+: set value, throws an exception if parameter isn't between defined min max.
 
 ### Getopt::ArgParse::Option::Rational
+An option with an rational argument.
 
 #### Attributes
+default
+: the default value
+
+min
+: when defined, the minimal value of argument
+
+max
+: when defined, the maximal value of argument
 
 #### Methods
 
 ### Getopt::ArgParse::Option::Count
+Counts the amount of occurrence of the option, eg. -vvv results in 3.
 
 #### Attributes
+default
+: The initial value of the counter.
+
+max
+: When defined, it throws exception when value >= maximum.
 
 #### Methods
+set(Int)
+: set the counter to given parameter.
+
+=defn set(Str)
+when a integer is given as argument, the value will be set to it, otherwise the counter will be increased.
+
+=defn set()
+increase the counter.
 
 ### Getopt::ArgParse::Option::Array
 
