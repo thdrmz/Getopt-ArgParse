@@ -2,7 +2,7 @@ use Test;
 
 use Getopt::ArgParse::Option::Number;
 
-plan 19;
+plan 20;
 my $op=Getopt::ArgParse::Option::Number.new();
 ok $op.defined, 'opt number defined';
 is $op.required, Bool::False, 'option is required';
@@ -18,7 +18,7 @@ throws-like( { $op.result(); },
 $op=Getopt::ArgParse::Option::Number.new(
     min     =>10,
     max     =>30,
-    value   =>16,
+    default =>16,
     optchar =>'n',
     optlong =>'set-number',
     help    =>'number option',
@@ -51,4 +51,7 @@ throws-like( { $op.set('bla'); },
 
 #say $op;
 like $op.gist, /value.+18/, 'gist value';
+
+$op.reset;
+is $op.value, 16, 'reset to default';
 done-testing;

@@ -2,7 +2,7 @@ use Test;
 
 use Getopt::ArgParse::Option::Float;
 
-plan 21;
+plan 22;
 my $op=Getopt::ArgParse::Option::Float.new();
 ok $op.defined, 'opt float defined';
 is $op.required, Bool::False, 'option is required';
@@ -18,7 +18,7 @@ throws-like( { $op.result(); },
 $op=Getopt::ArgParse::Option::Float.new(
     min     =>5.5,
     max     =>11.5,
-    value   =>10.75,
+    default =>10.75,
     optchar =>'n',
     optlong =>'set-real',
     help    =>'float option',
@@ -53,4 +53,8 @@ throws-like( { $op.set('bla'); },
 
 #say $op;
 like $op.gist, /value .+ 6.7/, 'gist value';
+
+$op.reset();
+is $op.value, 10.75, 'reset to default';
+
 done-testing;

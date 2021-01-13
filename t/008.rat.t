@@ -2,7 +2,7 @@ use Test;
 
 use Getopt::ArgParse::Option::Rational;
 
-plan 19;
+plan 20;
 
 my $op=Getopt::ArgParse::Option::Rational.new();
 ok $op.defined, 'opt rational defined';
@@ -15,7 +15,7 @@ throws-like( { $op.result(); },
 $op=Getopt::ArgParse::Option::Rational.new(
     min     =>1/9,
     max     =>10/3,
-    value   =>2/3,
+    default =>2/3,
     optchar =>'r',
     optlong =>'set-rat',
     help    =>'rat option',
@@ -50,4 +50,7 @@ throws-like( { $op.set('bla'); },
 
 #say $op;
 like $op.gist, /value .+ 6.7/, 'gist value';
+
+$op.reset();
+is $op.value, 2/3, 'reset to default';
 done-testing;

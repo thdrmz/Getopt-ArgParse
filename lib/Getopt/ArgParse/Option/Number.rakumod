@@ -4,19 +4,36 @@ use Getopt::ArgParse::Option::Base;
 #----------------------------------------
 =begin pod
 
-=head1 Number
+=TITLE Getopt::ArgParse::Option::Number
+
+=head2 Attributes
+
+=defn default
+the default value
+
+=defn min
+when defined, the minimal value of argument
+
+=defn max
+when defined, the maximal value of argument
+
+=head2 Methods
+=defn set(Str)
+set value, throws an exception if parameter isn't a number.
+
+=defn set(Int)
+set value, throws an exception if parameter isn't between defined min max.
 
 =end pod
 class Getopt::ArgParse::Option::Number 
-is Getopt::ArgParse::Option::Base 
+is Option::Base 
 is export {
     has Int $!value;
+    has Int $.default;
     has Int $.min;
     has Int $.max;
-    submethod TWEAK( Int :$min, Int :$max, Int :$value) {
-        $!min=$min;
-        $!max=$max;
-        if $value.defined { self.set($value); }
+    submethod TWEAK() {
+        self.set($!default) if $!default.defined;
         if !self.meta.defined { self.meta=q{<integer>}; }
     }
     method value() { $!value; }
@@ -46,4 +63,5 @@ is export {
         ~ ($!min.defined ?? 'min=>' ~  $!min ~ ", " !! '' )
         ~ ($!max.defined ?? 'max=>' ~  $!max ~ ", " !! '' );
     }
+    method reset() { $!value = $!default; }
 }

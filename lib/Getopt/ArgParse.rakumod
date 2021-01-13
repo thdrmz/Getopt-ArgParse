@@ -1,27 +1,36 @@
 =begin pod
 
-=head1 Getopt::ArgParse
+=TITLE Getopt::ArgParse
 
 A class to parse cmd line options.
 
+I'd like to parse the command line in a oo style, so create the parser object and
+add the option objects. The parser accepts short options prepend by a single dash (-abe), followed by characters, when there are multiple characters 
+
+As result of parse() you get the Hash of options and the argv() method gives the remaing arguments.
+
+When an error occurs while parsing, an exception will be thrown.
+
+
 =head2 Synopsis
 
+=begin code
 my $go=Getopt::ArgParse(
     descr=>'program description', 
-    epilog=>'text beiow help');
+    epilog=>'text below help');
 
 my $op=Getopt::ArgParse::Option::String(
     optchar=>'s',
     optlong=>'string',
-    value=>'default',
+    default=>'default',
     verify=>rx{^ <alpha>+ $},
     dest=>'destinationKey'
 );
-
 $go.add($op);
-
 %options = $go.parse();
 @arguments = $go.argv();
+
+=end code
 
 =head1 Getopt::ArgParse.new()
 
@@ -45,31 +54,32 @@ Return the list of remaining arguments after parsing.
 =defn parse()
 Parse @*ARGS
 
+=defn parse(Str <cmd>)
+The String <cmd> will be splitted like bash do.
+
 =defn parse(@args)
 Parse argument list returns a Hash, with options as pairs.
 
-=defn parse(Str $cmd [, Regex $split])
-Split a string into argument list using $split, 
-which defaults to whitespace.
-
-Todo: allow quoting with "" and ''.
 
 =head2 See also
 
-Getopt::ArgParse::Option::Boolean;
-Getopt::ArgParse::Option::String;
-Getopt::ArgParse::Option::Number;
-Getopt::ArgParse::Option::Float;
-Getopt::ArgParse::Option::Rational;
-Getopt::ArgParse::Option::Count;
-Getopt::ArgParse::Option::Choices;
-Getopt::ArgParse::Option::Array;
-Getopt::ArgParse::Option::Pairs;
-Getopt::ArgParse::Option::File;
+=item Getopt::ArgParse::Option::Boolean;
+=item Getopt::ArgParse::Option::String;
+=item Getopt::ArgParse::Option::Number;
+=item Getopt::ArgParse::Option::Float;
+=item Getopt::ArgParse::Option::Rational;
+=item Getopt::ArgParse::Option::Count;
+=item Getopt::ArgParse::Option::Choices;
+=item Getopt::ArgParse::Option::Array;
+=item Getopt::ArgParse::Option::Pairs;
+=item Getopt::ArgParse::Option::File;
+
+=AUTHOR Thomas Drillich <th@drillich.com>
 
 =end pod
 #----------------------------------------
 use Getopt::ArgParse::Option;
+use Getopt::ArgParse::Exception;
 #----------------------------------------
 class Getopt::ArgParse is export {
     has Str $!prog = $*PROGRAM-NAME.IO.basename();
@@ -93,26 +103,26 @@ class Getopt::ArgParse is export {
     multi method parse(--> Hash) {
         return self.parse(@*ARGS);
     }
-    multi method parse(Str $astr, Regex $sp = rx/\s+/ --> Hash) {
-        return self.parse($astr.split($sp));
+    multi method parse(Str $astr --> Hash) {
+        use Getopt::ArgParse::Str2Arg;
+        return self.parse(str2args($astr));
     }
     multi method parse(@args is copy --> Hash) {
+        self.reset() if $!isparsed;
         while (@args.elems > 0 && @args[0] ~~ rx{^ \-+}) {
             my $opt=@args.shift;
-            if ( $opt ~~ rx{^ \- ** 2 (<alnum>+) \= (.*) $} ) {
+            if ( $opt ~~ rx{^ \- ** 2 (<alpha> <[\w \- \+]>+) \= (.*) $} ) {
                 self.parselong($0.Str,$1.Str);
-            } elsif ( $opt ~~ rx{^ \- ** 2 (<alnum>+) } ) {
-                if self.parselong($0.Str, @args[0]) 
-                    && @args.elems > 0 {
-                    @args.shift;
-                }
-            } elsif ( $opt ~~ rx{^ \- (<alnum>+) $} ) {
+            } elsif ( $opt ~~ rx{^ \- ** 2 (<alpha> <[\w \- \+]>+) } ) {
+                @args.shift
+                    if self.parselong($0.Str, @args[0]) 
+                    && @args.elems > 0;
+            } elsif ( $opt ~~ rx{^ \- (<alpha>+) $} ) {
                 my $opt=$0;
                 for $opt.split('',:skip-empty) -> $c {
-                    if self.parseshort($c, @args[0])
-                        && @args.elems > 0 {
-                        @args.shift;
-                    }
+                    @args.shift
+                        if self.parseshort($c, @args[0])
+                        && @args.elems > 0;
                 }
             } else {
                 X::GP::Parse
@@ -130,14 +140,12 @@ class Getopt::ArgParse is export {
             } elsif $opt.required {
                 X::GP::Parse
                     .new(message=>q{Option } 
-                        ~ %res{$res.key}.optstr 
+                        ~ $opt.optstr 
                         ~ q{ is required!})
                     .throw;
             }
         }
-        if %res<help> {
-            self.help;
-        }
+        self.help, exit if %res<help>;
         return %res;
     }
     submethod parseshort(Str $opt, $arg --> Bool) {
@@ -147,7 +155,7 @@ class Getopt::ArgParse is export {
             }
             return %!optchar{$opt}.set($arg);
         }
-        X::GP::Parse.new(message=>qq{Option $opt does not exist!}).throw;
+        X::GP::Parse.new(message=>qq{Option -$opt does not exist!}).throw;
     }
     submethod parselong(Str $opt, $arg --> Bool) {
         if %!optlong{$opt}:exists {
@@ -156,7 +164,7 @@ class Getopt::ArgParse is export {
             }
             return %!optlong{$opt}.set($arg);
         }
-        X::GP::Parse.new(message=>qq{Option $opt does not exist!}).throw;        
+        X::GP::Parse.new(message=>qq{Option --$opt does not exist!}).throw;        
     }
     method argv() {
         if !$!isparsed {
@@ -181,7 +189,7 @@ class Getopt::ArgParse is export {
         }
         @!opts.append($opt);
     }
-    submethod help() {
+    method help() {
         my %oo;
         say $!prog;
         if $!descr.defined { say "\t" ~ $!descr; }
@@ -195,6 +203,12 @@ class Getopt::ArgParse is export {
         }
         if $!epilog.defined {
             say "\t" ~ $!epilog;
+        }
+    }
+    submethod reset() {
+        $!isparsed=False;
+        for @!opts -> $op {
+            $op.reset();
         }
     }
 }

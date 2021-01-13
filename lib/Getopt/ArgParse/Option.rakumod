@@ -1,4 +1,3 @@
-unit module Getopt::ArgParse::Option;
 use Getopt::ArgParse::Exception;
 use Getopt::ArgParse::Option::Base;
 use Getopt::ArgParse::Option::Boolean;

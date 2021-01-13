@@ -4,8 +4,12 @@ use Getopt::ArgParse::Option::Base;
 #----------------------------------------
 =begin pod
 
-=head1 Getopt::ArgParse::Option::Boolean
-manage boolean options
+=TITLE Getopt::ArgParse::Option::Boolean
+A boolean option defaults to False.
+A boolean option does not need an argument, but here are the arguments yes, no, true, false allowed to set a boolean option.
+Without a argument, the current value will be toggled.
+
+=head2 Methods
 
 =defn set()
 when called without arguments, the boolean value will be toggled.
@@ -22,31 +26,25 @@ Returns the boolean value.
 
 =end pod
 class Getopt::ArgParse::Option::Boolean 
-is Getopt::ArgParse::Option::Base is export {
-    has Bool:D $!value = Bool::False;
-    constant $rey = rx:i/( yes || true || ja || wahr) /;
-    constant $ren = rx:i/( no || false || nein || falsch) /;
+is Option::Base is export {
+    has Bool:D $!value = False;
+    has Bool:D $.default is default(False) is rw = False;
+    constant $rey = rx:i/ yes || true || ja || wahr /;
+    constant $ren = rx:i/ no || false || nein || falsch /;
     
-    submethod TWEAK(Bool :$value) {
-        if $value.defined {
-            $!value=$value;
-        } else {
-            $!value=Bool::False;
-        }
-#        if !self.meta.defined { self.meta = '[true|false]'; }
-    }
-    method value() { $!value; }
+    method value(--> Bool) { $!value; }
     multi method set( --> Bool) { $!value = !$!value; True;}
     multi method set(Bool:D $val --> Bool) { $!value = $val; True;}
     multi method set(Str:D $val --> Bool) {
         if ($val ~~ $rey ) {
-            $!value = Bool::True;
+            $!value = True;
         } elsif($val ~~ $ren ) {
-            $!value = Bool::False;
+            $!value = False;
         } else {
             $!value = !$!value;
             return False; # no boolen parameter
         }
         return True;
     }
+    method reset() { $!value = $!default; }
 }

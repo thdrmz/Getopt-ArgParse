@@ -8,24 +8,23 @@ use Getopt::ArgParse::Option::Base;
 =head1 File
 
 =end pod
-class Getopt::ArgParse::Option::File 
-is Getopt::ArgParse::Option::Base is export {
+class Getopt::ArgParse::Option::File
+is Option::Base
+is export {
     has IO::Path $!value;
-    has Regex $!verify;
-    has Bool $!write = False;
-    has Bool $!new = False;
-    has Bool $!read = True;
-    has Bool $!dir = False;
-    submethod TWEAK(Regex :$verify, Str :$value, 
-        Bool :$write = False, Bool :$new = False, 
-        Bool :$read = True, Bool :$dir = False) {
-        if $verify.defined { $!verify=$verify; }
-        $!write=$write;
-        $!new=$new;
-        $!read=$read;
-        $!dir=$dir;
-        if !self.meta.defined { self.meta = q{<file>}; }
-        if $value.defined { self.set($value); }
+    has IO::Path $!default;
+    has Regex $.verify is rw;
+    has Bool:D $.write   is default(False) is rw = False;
+    has Bool:D $.newfile is default(False) is rw = False;
+    has Bool:D $.read    is default(True)  is rw = True;
+    has Bool:D $.dir     is default(False) is rw = False;
+
+    submethod TWEAK(Str :$default) {
+        if !self.meta { self.meta = q{<file>}; }
+        if $default.defined {
+            self.set($default);
+            $!default = $!value;
+        }
     }
     method value() { $!value; }
     method set(Str:D $val --> Bool) {
@@ -36,13 +35,13 @@ is Getopt::ArgParse::Option::Base is export {
             .throw;
         }
         my $pp = IO::Path.new($val);
-        if $!new {
+        if $!newfile {
             if $pp ~~ :e {
                 X::GP::Value
                 .new(message=>self.optstr 
                     ~ qq{ $val shall not exist!})
                 .throw;
-            } elsif $pp.dirname.IO !~~ :w {
+            } elsif $pp.dirname.IO !~~ :rw {
                 X::GP::Value
                 .new(message=>self.optstr
                     ~ qq{ $val directory isn't writeable!})
@@ -59,7 +58,7 @@ is Getopt::ArgParse::Option::Base is export {
                 ~ qq{ $val is not readable!})
             .throw;
         }
-        if $!dir && $pp !~~ :d {
+        if $!dir && $pp !~~ :d && $pp !~~ :rw {
             X::GP::Value
             .new(message=>self.optstr 
                 ~ qq{ $val is not a directory!})
@@ -71,9 +70,10 @@ is Getopt::ArgParse::Option::Base is export {
     method gist() {
         self.gengist()
         ~ ($!verify.defined ?? 'verify=>' ~ $!verify.gist ~ ", " !! '' )
-        ~ ($!new.defined ?? 'new=>' ~ $!new.gist ~", " !! '' )
+        ~ ($!newfile.defined ?? 'newfile=>' ~ $!newfile.gist ~", " !! '' )
         ~ ($!dir.defined ?? 'dir=>' ~ $!dir.gist ~", " !! '' )
         ~ ($!read.defined ?? 'read=>' ~ $!read.gist ~", " !! '' )
         ~ ($!write.defined ?? 'write=>' ~ $!write.gist ~", " !! '' );
     }
+    method reset() { $!value = $!default; }
 }

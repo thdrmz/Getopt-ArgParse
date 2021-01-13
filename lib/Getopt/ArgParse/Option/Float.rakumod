@@ -3,18 +3,35 @@ use Getopt::ArgParse::Exception;
 use Getopt::ArgParse::Option::Base;
 #----------------------------------------
 =begin pod
-=head1 Float
+=TITLE Getopt::ArgParse::Option::Float
+
+=head2 Attributes
+
+=defn default
+the default value
+
+=defn min
+when defined, the minimal value of argument
+
+=defn max
+when defined, the maximal value of argument
+
+=head2 Methods
+=defn set(Str)
+set value, throws an exception if parameter isn't a number.
+
+=defn set(Float)
+set value, throws an exception if parameter isn't between defined min max.
 =end pod
 class Getopt::ArgParse::Option::Float 
-is Getopt::ArgParse::Option::Base 
+is Option::Base 
 is export {
     has Real $!value;
+    has Real $.default;
     has Real $.min;
     has Real $.max;
-    submethod BUILD( Real :$min, Real :$max, Real :$value) {
-        $!min=$min;
-        $!max=$max;
-        if $value.defined { self.set($value); }
+    submethod TWEAK( Real :$default) {
+        self.set($!default) if $!default.defined; 
         if !self.meta.defined { self.meta=q{<float>}; }
     }
     method value() { $!value; }
@@ -46,4 +63,5 @@ is export {
         ~ ($!min.defined ?? 'min=>' ~  $!min ~ ", " !! '' )
         ~ ($!max.defined ?? 'max=>' ~  $!max ~ ", " !! '' );
     }
+    method reset() { $!value = $!default; }
 }

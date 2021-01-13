@@ -4,10 +4,9 @@ use Getopt::ArgParse::Option::File;
 
 constant $NotWriteable = q{/etc/passwd};
 constant $NotExistant = q{non-existing-file.üöä};
-
 plan 25;
 # check new without parameters
-my $op=Getopt::ArgParse::Option::File.new();
+my $op=Getopt::ArgParse::Option::File.new;
 ok $op.defined, 'opt file defined';
 is $op.required, Bool::False, 'is not required';
 nok $op.value().defined, 'initial value';
@@ -67,7 +66,7 @@ $op=Getopt::ArgParse::Option::File.new(
         optchar=>'f',
         optlong=>'file',
         help=>'file option',
-        new=>True,
+        newfile=>True,
         meta=>'<new>');
 
 ok $op.set($NotExistant), 'new file is current directory';
@@ -81,5 +80,7 @@ throws-like(
 like $op.gist, 
     /Option \s* Type .* File .* value .* non\-existing\-file.üöä/, 
     'result of gist';
+
+$op.reset();
 
 done-testing;

@@ -2,7 +2,7 @@ use Test;
 
 use Getopt::ArgParse::Option::Choices;
 
-plan 29;
+plan 30;
 my $op=Getopt::ArgParse::Option::Choices.new();
 ok $op.defined, 'opt Choice defined';
 is $op.required, Bool::False, 'option is not required';
@@ -78,4 +78,8 @@ throws-like( { $op.set('kkk'); },
     message => '-a | --set-choice allows only one choice! (Dab,Kkk) selected');
 ok $op.value(){'Kkk'}, 'kkk == True is false after throw';
 
+$op.reset();
+is $op.value(),
+    {Abc => False, Dab => False, Kkk => False, Ooo => False, Rrr => False},
+    'reset choices';
 done-testing;

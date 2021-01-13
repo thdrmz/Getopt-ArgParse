@@ -14,17 +14,14 @@ A Regex defining valid valus,
 
 =end pod
 class Getopt::ArgParse::Option::Pairs 
-is Getopt::ArgParse::Option::Base 
+is Option::Base 
 is export {
     has %!value;
-    has Bool:D $!multiple = Bool::True;
-    has Regex $!validkey;
-    has Regex $!validval;
+    has Bool:D $.multiple = Bool::True;
+    has Regex $.validkey;
+    has Regex $.validval;
     
-    submethod TWEAK(Bool :$multiple, Regex :$validkey, Regex :$validval) {
-        if $multiple.defined { $!multiple=$multiple; }
-        if $validkey.defined { $!validkey=$validkey; }
-        if $validval.defined { $!validval=$validval; }
+    submethod TWEAK() {
         if !self.meta.defined { self.meta=q{<key>=<value>}; }
     }
     method set(Str $in --> Bool) {
@@ -71,4 +68,5 @@ is export {
             ?? 'multiple=>"' ~  $!multiple ~ "\", " 
             !! '' );
     }
+    method reset() { %!value:={}; }
 }

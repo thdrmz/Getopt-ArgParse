@@ -3,7 +3,7 @@ use Test;
 use Getopt::ArgParse::Option::Pairs;
 #say $op.^name;
 
-plan 25;
+plan 26;
 my $op=Getopt::ArgParse::Option::Pairs.new();
 ok $op.defined, 'opt Pairs defined';
 is $op.required, Bool::False, 'option is not required';
@@ -70,5 +70,6 @@ throws-like( { $op.set('kkk=333'); },
     X::GP::Value,
     message => q{-p | --set-pairs only one pair allowed!});
 
-
+$op.reset();
+is $op.value, {}, 'reset to empty';
 done-testing;exit;

@@ -48,15 +48,14 @@ Returns optchar and optlong as string, for the use in help messages.
 #----------------------------------------
 use Getopt::ArgParse::Exception;
 #----------------------------------------
-class Getopt::ArgParse::Option::Base is export {
+class Option::Base is export {
     has Str $.optchar;
     has Str $.optlong;
-    has Bool:D $.required is rw = False;
-    has Str $.help is rw;
-    has Str $.dest is rw;   
+    has Bool:D $.required is default(False) is rw = False;
+    has Str $.help is default('') is rw = '';
+    has Str $.dest is default('') is rw = '';   
     has Str $.meta is rw;
     
-    method value() {}
     method gengist() {
         my $val = self.value();
         self.^name ~~ m/<alnum>+ $/;
@@ -73,9 +72,9 @@ class Getopt::ArgParse::Option::Base is export {
     method gist() { self.gengist(); }
     method result() { 
         my $nam;
-        if $!dest.defined { 
+        if $!dest.defined && $!dest ~~ rx{^ <[\w \-]>+ $} { 
             $nam = $!dest; 
-        } elsif $!optlong.defined { 
+        } elsif $!optlong.defined && $!optlong ~~ rx{^ <[\w \-]>+ $} { 
             $nam = $!optlong; 
         } else {
             X::GP::NoName.new(message=>self.optstr() 
@@ -89,5 +88,28 @@ class Getopt::ArgParse::Option::Base is export {
         return ( $!optchar.defined ?? '-' ~ $!optchar !! '' ) 
             ~ ( $!optchar.defined && $!optlong.defined ?? ' | ' !! '' )
             ~ ( $!optlong.defined ?? '--' ~ $!optlong !! '');
+    }
+    multi method set() {
+        X::GP::Value
+        .new(message=>"option " ~ self.optstr ~ " needs an argument!")
+        .throw;
+     }
+     multi method set(--> Bool) {
+        X::GP::Value
+        .new(message=>"option " ~ self.optstr ~ 
+            " set() method in object undefined!")
+        .throw;
+     }
+     multi method set(Str $arg is copy --> Bool) {
+        X::GP::Value
+        .new(message=>"option " ~ self.optstr ~ 
+            " set(Str $arg) method in object undefined!")
+        .throw;
+     }
+    method value() {
+        X::GP::Value
+        .new(message=>"In option " ~ self.optstr 
+            ~ " does not exist a value() method!")
+        .throw;
     }
 }

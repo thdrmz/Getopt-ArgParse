@@ -20,19 +20,23 @@ Maximum amount of elements in the array.
 
 =end pod
 class Getopt::ArgParse::Option::Array 
-is Getopt::ArgParse::Option::Base 
+is Option::Base 
 is export {
     has @!ar;
+    has @!default;
     has Regex $!valid;
     has Str $!separator=',';
     has Int $!quantity;
     
-    submethod TWEAK(Str :$value, Str :$separator, 
+    submethod TWEAK(Str :$default, Str :$separator, 
         Regex :$valid, Int :$quantity) {
-        if $valid.defined { $!valid=$valid; }
-        if $quantity.defined { $!quantity=$quantity; }
-        if $separator.defined { $!separator=$separator; }
-        if $value.defined { self.set($value); }
+        $!valid=$valid if $valid.defined; 
+        $!quantity=$quantity if $quantity.defined;
+        $!separator=$separator if $separator.defined;
+        if $default.defined { 
+            self.set($default);
+            @!default=@!ar;
+        }
         if !self.meta.defined { 
             self.meta = q{<elem>[} ~ $!separator ~ q{<elem>]}; 
         }
@@ -60,4 +64,5 @@ is export {
         ~ ($!quantity.defined ?? 'quantity=>"' ~  $!quantity ~ "\", " !! '' )
         ~ ($!separator.defined ?? 'joiner=>"' ~  $!separator ~ "\", " !! '' );
     }
+    method reset() { @!ar=@!default; }
 }

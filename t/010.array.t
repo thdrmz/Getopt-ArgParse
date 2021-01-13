@@ -2,7 +2,7 @@ use Test;
 
 use Getopt::ArgParse::Option::Array;
 
-plan 18;
+plan 20;
 my $op=Getopt::ArgParse::Option::Array.new();
 ok $op.defined, 'opt Array defined';
 is $op.required, Bool::False, 'option is not required';
@@ -16,7 +16,7 @@ throws-like( { $op.result(); },
 $op=Getopt::ArgParse::Option::Array.new(
     optchar =>'a',
     optlong =>'set-array',
-    value   =>'xyz,uvw',
+    default =>'xyz,uvw',
     valid =>rx{^ <alpha>+ $},
     quantity=>10,
     help    =>'array option',
@@ -47,4 +47,9 @@ throws-like( { $op.set('over'); },
 
 #say $op;
 like $op.gist, /last/, 'gist value';
+
+$op.reset;
+is $op.elems, 2, 'reset to default';
+is $op.value, 'xyz uvw', 'default value';
+
 done-testing;

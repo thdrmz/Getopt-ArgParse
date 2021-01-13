@@ -3,23 +3,38 @@ use Getopt::ArgParse::Exception;
 use Getopt::ArgParse::Option::Base;
 #----------------------------------------
 =begin pod
-=head1 Count
+
+=TITLE Getopt::ArgParse::Option::Count
+Counts the amount of occurrence of the option, eg. -vvv results in 3.
+
+=head2 Attributes
+=defn default
+The initial value of the counter.
+
+=defn max
+When defined, it throws exception when value >= maximum.
+
+=head2 Methods
+=defn set(Int)
+set the counter to given parameter.
+
+=defn set(Str)
+when a integer is given as argument, the value will be set to it, otherwise the counter will be increased.
+
+=defn set()
+increase the counter.
+
 =end pod
 class Getopt::ArgParse::Option::Count
-is Getopt::ArgParse::Option::Base
+is Option::Base
 is export {
     has Int $!value = 0;
-    has Int $!max;
-    submethod TWEAK(Int :$max, Int :$value) {
-        $!max=$max;
-        if $value.defined { 
-            self.set($value); 
-        } else {
-            $!value = 0;
-        }
-        if !self.meta.defined {
-            self.meta='[num]' ~ ($!max.defined ?? qq{ < $!max} !! '');
-        }
+    has Int $.default is default(0) is rw = 0;
+    has Int $.max;
+    submethod TWEAK(Int :$default) {
+        self.set($!default);
+        self.meta='[num]' ~ ($!max.defined ?? qq{ < $!max} !! '')
+            if !self.meta.defined;
     }
     method value() { $!value; }
     multi method set(Int:D $val --> Bool) { 
@@ -51,4 +66,5 @@ is export {
         ~ ($!value.defined ?? 'value=>' ~  $!value ~ ". " !! '' )
         ~ ($!max.defined ?? 'max=>' ~  $!max ~ ", " !! '' );
     }
+    method reset() { $!value = $!default; }
 }

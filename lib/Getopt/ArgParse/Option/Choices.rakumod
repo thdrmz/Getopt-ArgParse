@@ -24,7 +24,7 @@ Returns Hash with choices as keys and the choices which are set are true, the ot
 
 =end pod
 class Getopt::ArgParse::Option::Choices 
-is Getopt::ArgParse::Option::Base 
+is Option::Base 
 is export {
     has %!value;
     has Bool:D $!multiple = Bool::True;
@@ -69,5 +69,10 @@ is export {
         self.gengist()
         ~ ($!multiple.defined ?? 'multiple=>"' ~  $!multiple ~ "\", " !! '' )
         ~ ($!case.defined ?? 'case=>"' ~  $!case ~ "\", " !! '' );
+    }
+    method reset() {
+        for %!value.keys {
+            %!value{$_} = False; 
+        }
     }
 }
