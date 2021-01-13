@@ -1,21 +1,36 @@
 {
-    "perl"      : "6.d",
+    "meta-version" : "1",
+    "perl"      : "6.c",
     "name"      : "Getopt::ArgParse",
-    "api"       : "1",
-    "version"   : "0.0.1",
-    "description" : "Getopt::ArgParse",
-    "authors    : [ "Thomas Drillich <th@drillich.com" ],
-    "source-url" : "https://github.com/thdrmz/Getopt-ArgParse".
+    "version"   : "1.0",
+    "description" : "parse argument list",
+    "authors"    : [ "Thomas Drillich <th@drillich.com>" ],
+    "auth"      : "github:thdrmz",
+    "source-url" : "https://github.com/thdrmz/Getopt-ArgParse.git",
     "license"   : "Artistic-2.0",
-    "provides"  : {
-        "Getopt::ArgParse":"lib/Getopt/ArgParse.rakumod"
-    },
+    "api"       : "1",
     "depends"   : [],
-    "test-depends": [
-        "Test::META"
-    ],
     "build-depends": [],
-    "resources" : ["templates/default-template.mustache"],
-    "tags"      : [ "Getopt" ],
+    "test-depends": [
+        "Test",
+        "Test::META"
+        ],
+    "provides"  : {
+        "Getopt::ArgParse"                  : "lib/Getopt/ArgParse.rakumod",
+        "Getopt::ArgParse::Str2Arg"         : "lib/Getopt/ArgParse/Str2Arg.rakumod",
+        "Getopt::ArgParse::Exception"       : "lib/Getopt/ArgParse/Exception.rakumod",
+        "Getopt::ArgParse::Option"          : "lib/Getopt/ArgParse/Option.rakumod",
+        "Getopt::ArgParse::Option::Base"    : "lib/Getopt/ArgParse/Option/Base.rakumod",
+        "Getopt::ArgParse::Option::Array"   : "lib/Getopt/ArgParse/Option/Array.rakumod",
+        "Getopt::ArgParse::Option::Boolean" : "lib/Getopt/ArgParse/Option/Boolean.rakumod",
+        "Getopt::ArgParse::Option::Choices" : "lib/Getopt/ArgParse/Option/Choices.rakumod",
+        "Getopt::ArgParse::Option::Count"   : "lib/Getopt/ArgParse/Option/Count.rakumod",
+        "Getopt::ArgParse::Option::File"    : "lib/Getopt/ArgParse/Option/File.rakumod",
+        "Getopt::ArgParse::Option::Float"   : "lib/Getopt/ArgParse/Option/Float.rakumod",
+        "Getopt::ArgParse::Option::Number"  : "lib/Getopt/ArgParse/Option/Number.rakumod",
+        "Getopt::ArgParse::Option::Pairs"   : "lib/Getopt/ArgParse/Option/Pairs.rakumod",
+        "Getopt::ArgParse::Option::Rational": "lib/Getopt/ArgParse/Option/Rational.rakumod",
+        "Getopt::ArgParse::Option::String"  : "lib/Getopt/ArgParse/Option/String.rakumod"
+    },
+    "tags"      : [ "Getopt" ]
 }
-// AUTHOR_TESTING=1 prove -v -e "perl6 -Ilib"
