@@ -2,7 +2,7 @@
     "meta-version" : "1",
     "perl"      : "6.c",
     "name"      : "Getopt::ArgParse",
-    "version"   : "1.0",
+    "version"   : "1.0.1",
     "description" : "parse argument list",
     "authors"    : [ "Thomas Drillich <th@drillich.com>" ],
     "auth"      : "github:thdrmz",

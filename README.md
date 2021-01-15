@@ -136,27 +136,9 @@ reset()
 : reset to default.
 
 ### Getopt::ArgParse::Option::Number
-Manage a option with an integer argument.
-
-#### Attributes
-default
-: the default value
-
-min
-: when defined, the minimal value of argument
-
-max
-: when defined, the maximal value of argument
-
-#### Methods
-et(Str)
-: set value, throws an exception if parameter isn't a number.
-
-set(Int)
-: set value, throws an exception if parameter isn't between defined min max.
-
 ### Getopt::ArgParse::Option::Float
-Manage a option with an floating point argument.
+### Getopt::ArgParse::Option::Rational
+Manage a option with an integer,float or rational argument.
 
 #### Attributes
 default
@@ -172,10 +154,9 @@ max
 set(Str)
 : set value, throws an exception if parameter isn't a number.
 
-set(Float)
+set(Int)
 : set value, throws an exception if parameter isn't between defined min max.
 
-### Getopt::ArgParse::Option::Rational
 An option with an rational argument.
 
 #### Attributes
@@ -187,8 +168,6 @@ min
 
 max
 : when defined, the maximal value of argument
-
-#### Methods
 
 ### Getopt::ArgParse::Option::Count
 Counts the amount of occurrence of the option, eg. -vvv results in 3.
@@ -211,18 +190,66 @@ when a integer is given as argument, the value will be set to it, otherwise the 
 increase the counter.
 
 ### Getopt::ArgParse::Option::Array
+Collect option arguments in an array, an option string will be splitted by <separator> and 
+appended to result array.
 
 #### Attributes
+valid
+: Regular expression which matches valid elements.
+
+separator
+: Charakter to split the option arguments, defauls to »,«.
+
+quantity
+: Maximum amount of elements in the array.
 
 #### Methods
+set(Str <value>[<separator><value>])
+: Append elements to resulting array, the option argument will be splitted with <separator>. 
+
+elems
+:Returns number of resulting elements.
 
 ### Getopt::ArgParse::Option::Choices
+Create a hash whose keys are the <choices>, which values are false. 
+A choice will be turned to true, when option argument matches a key name.
 
 #### Attributes
+multiple
+: Boolean defaults to true. 
+When true allows multiple choices to choose, 
+on false only one choice is allowed to choose.
+case
+: Boolean defaults to true, the choices keys are case sensitiv.
+choices
+: An array of choices
 
 #### Methods
+set(Str <choice>)
+: Set a choice to true, throws exception when <choice> does not match a key.
+value()
+: Returns Hash with choices as keys and the choices which are set are true, the others are false.
 
 ### Getopt::ArgParse::Option::Pairs
+=head1 Pairs
+On Pairs the argument of an option must submitted as "<key>=<value>". 
+As result this object returns a hash object.
+
+#### Attributes
+multiple
+: Boolean defaults to true, when true allows multiple pairs.
+
+validkey
+: Regex to verify a key.
+
+validval
+: A Regex defining valid values.
+
+#### Methods
+value
+: Returns collected pairs as hash object.
+set(Str "<key>=<value>")
+: Split the given option argument in <key> and <value> at the first equal sign and colleced them in internal hash.
 
 #### Attributes
 

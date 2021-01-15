@@ -5,7 +5,10 @@ use Getopt::ArgParse::Option::Base;
 =begin pod
 
 =head1 Getopt::ArgParse::Option::Choices
+Create a hash whose keys are the <choices>, which values are false. 
+A choice will be turned to true, when option argument matches a key name.
 
+=head2 Attributes
 =defn multiple
 Boolean defaults to true. 
 When true allows multiple choices, 
@@ -13,6 +16,9 @@ on false only one choice is allowed.
 
 =defn case
 Boolean defaults to true, the choices keys are case sensitiv.
+
+=defn choices
+An array of choices
 
 =head2 Methods
 

@@ -5,18 +5,25 @@ use Getopt::ArgParse::Option::Base;
 =begin pod
 
 =head1 Array
+Collect option arguments in an array, an option string will be splitted by <separator> and 
+appended to result array.
 
+=head2 Attributes
 =defn valid
 Regular expression which matches valid elements.
 
 =defn separator
-Regular expression to split the arguments, defauls to »\s*,\s*«.
-
-=defn joiner
-The charakters to join the array elements, defauls to »,«.
+Charakter to split the option arguments, defauls to »,«.
 
 =defn quantity
 Maximum amount of elements in the array.
+
+=head2 Methods
+=defn set(Str <value>[<separator><value>])
+Append elements to resulting array, the option argument will be splitted with <separator>. 
+
+=defn elems
+Returns number of resulting elements.
 
 =end pod
 class Getopt::ArgParse::Option::Array 

@@ -4,4 +4,6 @@
 # precompiled files
 .precomp
 lib/.precomp
-.kate-swp
+
+*.kate-swp
+test.pl
